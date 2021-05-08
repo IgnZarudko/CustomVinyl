@@ -40,6 +40,6 @@ public class TrackTriggerHandler implements TriggerTemplate.Handler {
         }
 
         SongService.updateTrackCount(songsToUpdateIdSet);
-        MixService.updateMixesGenres(mixesToUpdateIdSet);
+        MixService.updateMixesInfo(mixesToUpdateIdSet);
     }
 }
