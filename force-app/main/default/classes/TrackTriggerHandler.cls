@@ -9,46 +9,37 @@ public class TrackTriggerHandler implements TriggerTemplate.Handler {
 	}
     
     public void handle(TriggerTemplate.TriggerAction action) {
-        if (action == TriggerTemplate.TriggerAction.afterinsert) {
-            Set<Id> songToUpdateIds = new Set<Id>();
-            Set<Id> mixesToUpdateIds = new Set<Id>();
-            
-            for (Track__c track: newValues) {
-                songToUpdateIds.add(track.Song__c);
-                mixesToUpdateIds.add(track.Mix__c);
-            }
+        Set<Id> songsToUpdateIdSet = new Set<Id>();
+        Set<Id> mixesToUpdateIdSet = new Set<Id>();
 
-            //Service classes call
+        if (action == TriggerTemplate.TriggerAction.afterinsert) {            
+            for (Track__c track: newValues) {
+                songsToUpdateIdSet.add(track.Song__c);
+                mixesToUpdateIdSet.add(track.Mix__c);
+            }
         }
 
         if (action == TriggerTemplate.TriggerAction.afterupdate) {
-            Set<Id> songToUpdateIds = new Set<Id>();
-            Set<Id> mixesToUpdateIds = new Set<Id>();
-
             for (Track__c newTrack: newValues) {
                 if(newTrack.Song__c != oldValues.get(newTrack.Id).Song__c) {
-                    songToUpdateIds.add(newTrack.Song__c);
-                    songToUpdateIds.add(oldValues.get(newTrack.Id).Song__c);
+                    songsToUpdateIdSet.add(newTrack.Song__c);
+                    songsToUpdateIdSet.add(oldValues.get(newTrack.Id).Song__c);
 
-                    mixesToUpdateIds.add(newTrack.Mix__c);
-                    mixesToUpdateIds.add(oldValues.get(newTrack.Id).Mix__c);
+                    mixesToUpdateIdSet.add(newTrack.Mix__c);
+                    mixesToUpdateIdSet.add(oldValues.get(newTrack.Id).Mix__c);
 
                 }
             }
-
-            //Service class call
         }
 
         if (action == TriggerTemplate.TriggerAction.afterdelete) {
-            Set<Id> songToUpdateIds = new Set<Id>();
-            Set<Id> mixesToUpdateIds = new Set<Id>();
-
             for (Track__c track: oldValues.values()) {
-                songToUpdateIds.add(track.Song__c);
-                mixesToUpdateIds.add(track.Mix__c);
+                songsToUpdateIdSet.add(track.Song__c);
+                mixesToUpdateIdSet.add(track.Mix__c);
             }
-
-            //Service call
         }
+
+        SongService.updateTrackCount(songsToUpdateIdSet);
+        MixService.updateMixesGenres(mixesToUpdateIdSet);
     }
 }
