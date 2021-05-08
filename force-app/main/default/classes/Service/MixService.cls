@@ -36,10 +36,10 @@ public class MixService {
 
     private static Mix__c getMixWithRecountedGenres(Mix__c mix, Map<String, Integer> genresAndAmount) {
         Integer primaryGenreCount = 0;
-        String primaryGenre;
+        String primaryGenre = mix.Primary_Genre__c;
 
         Integer secondaryGenreCount = 0;
-        String secondaryGenre;
+        String secondaryGenre = mix.Secondary_Genre__c;
 
         for (String key: genresAndAmount.keySet()) {
             if (primaryGenreCount < genresAndAmount.get(key)) {
