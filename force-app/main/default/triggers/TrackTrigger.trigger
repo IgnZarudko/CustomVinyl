@@ -3,7 +3,6 @@ trigger TrackTrigger on Track__c (after insert, after update, after delete) {
     
     triggerManager.addHandler(new TrackTriggerHandler(), new List<TriggerTemplate.TriggerAction>{
         TriggerTemplate.TriggerAction.afterinsert, 
-        TriggerTemplate.TriggerAction.afterupdate,
         TriggerTemplate.TriggerAction.afterdelete
     });
 
