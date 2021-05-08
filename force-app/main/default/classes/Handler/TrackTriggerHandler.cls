@@ -19,19 +19,6 @@ public class TrackTriggerHandler implements TriggerTemplate.Handler {
             }
         }
 
-        if (action == TriggerTemplate.TriggerAction.afterupdate) {
-            for (Track__c newTrack: newValues) {
-                if(newTrack.Song__c != oldValues.get(newTrack.Id).Song__c) {
-                    songsToUpdateIdSet.add(newTrack.Song__c);
-                    songsToUpdateIdSet.add(oldValues.get(newTrack.Id).Song__c);
-
-                    mixesToUpdateIdSet.add(newTrack.Mix__c);
-                    mixesToUpdateIdSet.add(oldValues.get(newTrack.Id).Mix__c);
-
-                }
-            }
-        }
-
         if (action == TriggerTemplate.TriggerAction.afterdelete) {
             for (Track__c track: oldValues.values()) {
                 songsToUpdateIdSet.add(track.Song__c);
