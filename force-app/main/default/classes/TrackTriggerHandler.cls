@@ -1,11 +1,11 @@
 public class TrackTriggerHandler implements TriggerTemplate.Handler {
-    private List<Opportunity> newValues;
-	private Map<Id, Opportunity> oldValues;
+    private List<Track__c> newValues;
+	private Map<Id, Track__c> oldValues;
 
     public void setValues(List<sObject> newValues, Map<Id, sObject> oldValues)
 	{
-		this.newValues = (List<Opportunity>)newValues;
-		this.oldValues = (Map<Id, Opportunity>)oldValues;
+		this.newValues = (List<Track__c>)newValues;
+		this.oldValues = (Map<Id, Track__c>)oldValues;
 	}
     
     public void handle(TriggerTemplate.TriggerAction action) {
