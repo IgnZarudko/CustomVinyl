@@ -66,7 +66,7 @@ public class TrackTriggerTests {
     }
 
     @isTest
-    public static void mixGenresAreChangedAfterInsertTest() {
+    public static void mixGenresAreUpdatedAfterInsertTest() {
         Song__c hipHop1 = [SELECT Id, Track_Amount__c FROM Song__c WHERE Name = 'hip_hop_1' LIMIT 1];
         Song__c hipHop2 = [SELECT Id, Track_Amount__c FROM Song__c WHERE Name = 'hip_hop_3' LIMIT 1];
         Song__c hipHop3 = [SELECT Id, Track_Amount__c FROM Song__c WHERE Name = 'hip_hop_3' LIMIT 1];
@@ -97,35 +97,34 @@ public class TrackTriggerTests {
     @isTest
     public static void mixGenresAreUpdatedAfterDeleteTest() {
         Song__c hipHop1 = [SELECT Id, Track_Amount__c FROM Song__c WHERE Name = 'hip_hop_1' LIMIT 1];
-        Song__c hipHop2 = [SELECT Id, Track_Amount__c FROM Song__c WHERE Name = 'hip_hop_3' LIMIT 1];
+        Song__c hipHop2 = [SELECT Id, Track_Amount__c FROM Song__c WHERE Name = 'hip_hop_2' LIMIT 1];
         Song__c hipHop3 = [SELECT Id, Track_Amount__c FROM Song__c WHERE Name = 'hip_hop_3' LIMIT 1];
         Song__c rock1 = [SELECT Id, Track_Amount__c FROM Song__c WHERE Name = 'rock_1' LIMIT 1];
         Song__c rock2 = [SELECT Id, Track_Amount__c FROM Song__c WHERE Name = 'rock_2' LIMIT 1];
 
-        Mix__c mixWithoutSongs = [SELECT Id, Song_Amount__c, Primary_Genre__c, Secondary_Genre__c FROM Mix__c WHERE Name = 'Mix Two' LIMIT 1];
+        Mix__c mixWithSongs = [SELECT Id, Song_Amount__c, Primary_Genre__c, Secondary_Genre__c FROM Mix__c WHERE Name = 'Mix One' LIMIT 1];
 
 
         insert new List<Track__c>{
-            new Track__c(Song__c = hipHop1.Id, Mix__c = mixWithoutSongs.Id),
-            new Track__c(Song__c = hipHop2.Id, Mix__c = mixWithoutSongs.Id),
-            new Track__c(Song__c = hipHop3.Id, Mix__c = mixWithoutSongs.Id),
-            new Track__c(Song__c = rock1.Id, Mix__c = mixWithoutSongs.Id),
-            new Track__c(Song__c = rock2.Id, Mix__c = mixWithoutSongs.Id)
+            new Track__c(Song__c = hipHop2.Id, Mix__c = mixWithSongs.Id),
+            new Track__c(Song__c = hipHop3.Id, Mix__c = mixWithSongs.Id),
+            new Track__c(Song__c = rock1.Id, Mix__c = mixWithSongs.Id),
+            new Track__c(Song__c = rock2.Id, Mix__c = mixWithSongs.Id)
         };
 
         Test.startTest();
 
             Set<Id> hipHopToDeleteIdSet = new Set<Id>{hipHop1.Id, hipHop2.Id};
 
-            delete [SELECT Id FROM Track__c WHERE Song__c in :hipHopToDeleteIdSet];
+            delete [SELECT Id FROM Track__c WHERE Song__c IN :hipHopToDeleteIdSet AND Mix__c = :mixWithSongs.Id];
 
         Test.stopTest();
 
-        mixWithoutSongs = [SELECT Id, Song_Amount__c, Primary_Genre__c, Secondary_Genre__c FROM Mix__c WHERE Name = 'Mix Two' LIMIT 1];
+        mixWithSongs = [SELECT Id, Song_Amount__c, Primary_Genre__c, Secondary_Genre__c FROM Mix__c WHERE Name = 'Mix One' LIMIT 1];
 
-        System.assertEquals('Rock', mixWithoutSongs.Primary_Genre__c, 'Primary Genre was not updated');
+        System.assertEquals('Rock', mixWithSongs.Primary_Genre__c, 'Primary Genre was not updated');
 
-        System.assertEquals('Hip hop', mixWithoutSongs.Secondary_Genre__c, 'Secondary Genre was not updated');
+        System.assertEquals('Hip hop', mixWithSongs.Secondary_Genre__c, 'Secondary Genre was not updated');
 
     }
 }
