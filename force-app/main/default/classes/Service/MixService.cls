@@ -1,6 +1,7 @@
 public class MixService {
     public static void updateMixesInfo(Set<Id> mixesToUpdateIdSet) {
         List<Mix__c> mixesToUpdateList = [SELECT Id, 
+                                                    Name,
                                                     Primary_Genre__c, 
                                                     Secondary_Genre__c, 
                                                     Duration__c,
@@ -36,15 +37,19 @@ public class MixService {
 
     private static Mix__c getMixWithRecountedGenres(Mix__c mix, Map<String, Integer> genresAndAmount) {
         Integer primaryGenreCount = 0;
-        String primaryGenre = mix.Primary_Genre__c;
+        String primaryGenre;
 
         Integer secondaryGenreCount = 0;
-        String secondaryGenre = mix.Secondary_Genre__c;
+        String secondaryGenre;
 
+        System.debug('Calculating genres for mix ' + mix.Name);
         for (String key: genresAndAmount.keySet()) {
+            System.debug('Genre: ' + key + ', Amount: ' + genresAndAmount.get(key));
             if (primaryGenreCount < genresAndAmount.get(key)) {
-                secondaryGenreCount = primaryGenreCount;
-                secondaryGenre = primaryGenre;
+                if (genresAndAmount.get(primaryGenre) > 0) {
+                    secondaryGenre = primaryGenre;
+                    secondaryGenreCount = primaryGenreCount;
+                }
 
                 primaryGenreCount = genresAndAmount.get(key);
                 primaryGenre = key;
@@ -60,7 +65,7 @@ public class MixService {
         }
 
         mix.Primary_Genre__c = primaryGenre;
-        mix.Secondary_Genre__c = secondaryGenre;
+        mix.Secondary_Genre__c = String.isBlank(secondaryGenre) ? primaryGenre : secondaryGenre;
 
         return mix;
     }
@@ -81,4 +86,5 @@ public class MixService {
 
         return genresWithAmount;
     }
+
 }   
